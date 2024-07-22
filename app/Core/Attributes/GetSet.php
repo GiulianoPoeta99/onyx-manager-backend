@@ -1,4 +1,4 @@
-<?php namespace App\Core\Attributes;
+<?php namespace Core\Attributes;
 
 use Attribute;
 

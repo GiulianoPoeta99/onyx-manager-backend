@@ -41,7 +41,28 @@ class Autoload extends AutoloadConfig
      */
     public $psr4 = [
         APP_NAMESPACE => APPPATH,
+        'Core' => APPPATH . 'Core',
+        'Modules' => APPPATH . 'Modules',
     ];
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        // Agregar dinámicamente los namespaces de los módulos
+        $this->addModuleNamespaces();
+    }
+
+    private function addModuleNamespaces()
+    {
+        $modulesPath = APPPATH . 'Modules';
+        $modules = array_filter(glob($modulesPath . '/*'), 'is_dir');
+
+        foreach ($modules as $module) {
+            $moduleName = basename($module);
+            $this->psr4['Modules\\' . $moduleName] = $modulesPath . '/' . $moduleName;
+        }
+    }
 
     /**
      * -------------------------------------------------------------------

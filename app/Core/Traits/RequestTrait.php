@@ -1,4 +1,4 @@
-<?php namespace App\Core\Traits;
+<?php namespace Core\Traits;
 
 use CodeIgniter\HTTP\ResponseInterface;
 

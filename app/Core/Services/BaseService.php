@@ -1,6 +1,7 @@
-<?php namespace App\Core\Services;
+<?php namespace Core\Services;
 
-use App\Core\Repositories\BaseRepository;
+use Core\Repositories\BaseRepository;
+use Core\Entities\BaseEntity;
 
 class BaseService
 {
@@ -11,28 +12,39 @@ class BaseService
         $this->repository = $repository;
     }
 
-    public function getAll()
+    public function getAll(): array
     {
         return $this->repository->findAll();
     }
 
-    public function getById($id)
+    public function getById($id): ?BaseEntity
     {
         return $this->repository->find($id);
     }
 
-    public function create(array $data)
+    public function create(array $data): ?BaseEntity
     {
+        if (!$this->repository->validate($data)) {
+            return null;
+        }
         return $this->repository->create($data);
     }
 
-    public function update($id, array $data)
+    public function update($id, array $data): ?BaseEntity
     {
+        if (!$this->repository->validate($data)) {
+            return null;
+        }
         return $this->repository->update($id, $data);
     }
 
-    public function delete($id)
+    public function delete($id): bool
     {
         return $this->repository->delete($id);
+    }
+
+    public function getErrors(): array
+    {
+        return $this->repository->getValidationErrors();
     }
 }
