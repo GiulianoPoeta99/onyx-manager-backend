@@ -1,53 +1,61 @@
 <?php namespace Core\Entities;
 
 use CodeIgniter\Entity\Entity;
-
 use Core\Attributes\GetSet;
+use ReflectionClass;
 
 class BaseEntity extends Entity
 {
     protected $dates = [];
     protected $casts = [];
 
-    public function __get($key)
+    #[GetSet('get')]
+    protected $id;
+
+    public function __construct(array $data = null)
     {
-        $getter = $this->getAccessorMethod($key, 'get');
-        if ($getter) {
-            return $this->$getter();
-        }
-        return parent::__get($key);
+        parent::__construct($data);
+        $this->initializeGettersAndSetters();
     }
 
-    public function __set(string $key, $value = null)
+    private function initializeGettersAndSetters()
     {
-        $setter = $this->getAccessorMethod($key, 'set');
-        if ($setter) {
-            $this->$setter($value);
-        } else {
-            parent::__set($key, $value);
-        }
-    }
+        $reflection = new ReflectionClass($this);
+        $properties = $reflection->getProperties();
 
-    private function getAccessorMethod($property, $type)
-    {
-        $reflection = new \ReflectionClass($this);
-        $props = $reflection->getProperties();
-
-        foreach ($props as $prop) {
-            $attributes = $prop->getAttributes(GetSet::class);
-            if (!empty($attributes) && $prop->getName() === $property) {
+        foreach ($properties as $property) {
+            $attributes = $property->getAttributes(GetSet::class);
+            if (!empty($attributes)) {
                 $attribute = $attributes[0]->newInstance();
-                
-                if ($type === 'get' && $attribute->hasGetter()) {
-                    return 'get' . ucfirst($property);
-                } elseif ($type === 'set' && $attribute->hasSetter()) {
-                    return 'set' . ucfirst($property);
+                $propertyName = $property->getName();
+
+                if ($attribute->hasGetter()) {
+                    $this->createGetter($propertyName);
                 }
-                
-                return null;
+                if ($attribute->hasSetter()) {
+                    $this->createSetter($propertyName);
+                }
             }
         }
+    }
 
-        return null;
+    private function createGetter($property)
+    {
+        $methodName = 'get' . ucfirst($property);
+        if (!method_exists($this, $methodName)) {
+            $this->$methodName = function() use ($property) {
+                return $this->attributes[$property] ?? null;
+            };
+        }
+    }
+
+    private function createSetter($property)
+    {
+        $methodName = 'set' . ucfirst($property);
+        if (!method_exists($this, $methodName)) {
+            $this->$methodName = function($value) use ($property) {
+                $this->attributes[$property] = $value;
+            };
+        }
     }
 }

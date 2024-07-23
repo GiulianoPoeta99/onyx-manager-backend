@@ -5,8 +5,12 @@ use Core\Attributes\GetSet;
 
 class UserEntity extends BaseEntity
 {
-    #[GetSet]
-    protected $id;
+    protected $casts = [
+        'id' => 'integer',
+        'email' => 'string',
+        'first_name' => 'string',
+        'last_name' => 'string',
+    ];
 
     #[GetSet]
     protected $email;
