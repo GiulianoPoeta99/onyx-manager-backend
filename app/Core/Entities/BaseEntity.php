@@ -1,8 +1,9 @@
 <?php namespace Core\Entities;
 
 use CodeIgniter\Entity\Entity;
-use Core\Attributes\GetSet;
 use ReflectionClass;
+
+use Core\Attributes\GetSet;
 
 class BaseEntity extends Entity
 {
