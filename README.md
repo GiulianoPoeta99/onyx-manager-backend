@@ -28,6 +28,21 @@
     ```
     Esto hace todas las migraciones que encuentre en App\
 
+## Seeders
+
+* Crear seeder:
+    ```bash
+    php spark make:seeder NombreDelSeeder
+
+    # ejemplo
+    php spark make:seeder UserSeeder
+    ```
+* Hacer seeder:
+    ```bash
+    php spark db:seed UserSeeder
+    ```
+
+
 ## Encender para dev
 
 ```bash
