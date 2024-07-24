@@ -24,19 +24,25 @@ class UserService extends BaseService
         return $this->create($data);
     }
 
-    public function updateUser($id, array $data): ?UserEntity
+    public function create(array $data): ?UserEntity
     {
-        // Si se está actualizando la contraseña, hasheala
         if (isset($data['password'])) {
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
+        return parent::create($data);
+    }
 
-        return $this->update($id, $data);
+    public function update($id, array $data): ?UserEntity
+    {
+        if (isset($data['password'])) {
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        }
+        return parent::update($id, $data);
     }
 
     public function authenticateUser(string $email, string $password): ?UserEntity
     {
-        $user = $this->userRepository->findByEmail($email);
+        $user = $this->repository->findByEmail($email);
         if ($user && password_verify($password, $user->password)) {
             return $user;
         }

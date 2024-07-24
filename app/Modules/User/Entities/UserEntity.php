@@ -29,14 +29,4 @@ class UserEntity extends BaseEntity
         $this->attributes['password'] = password_hash($password, PASSWORD_DEFAULT);
         return $this;
     }
-
-    public function verifyPassword(string $password): bool
-    {
-        return password_verify($password, $this->attributes['password']);
-    }
-
-    public function getFullName(): string
-    {
-        return $this->first_name . ' ' . $this->last_name;
-    }
 }

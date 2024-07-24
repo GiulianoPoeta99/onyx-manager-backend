@@ -15,7 +15,7 @@ class UserController extends BaseController
     public function register()
     {
         $data = $this->getRequestInput();
-        $user = $this->service->createUser($data);
+        $user = $this->service->create($data);
 
         if ($user === null) {
             return $this->respondValidationErrors($this->service->getErrors());
@@ -36,7 +36,4 @@ class UserController extends BaseController
         // Aquí podrías generar un token JWT si estás usando autenticación basada en tokens
         return $this->respondSuccess(['user' => $user, 'token' => 'JWT_TOKEN_HERE']);
     }
-
-    // Los métodos index(), show(), create(), update(), y delete() 
-    // ya están implementados en BaseController
 }
