@@ -121,6 +121,7 @@ class ${MODULE_NAME}Controller extends BaseController
 }"
 
 create_file "$MODULE_NAME/Database/Migrations/$(date +%Y-%m-%d-%H%M%S)_Create${MODULE_NAME}Table.php" "<?php
+
 namespace Modules\\$MODULE_NAME\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
@@ -146,19 +147,19 @@ use CodeIgniter\Entity\Entity;
 
 class $MODULE_NAME extends Entity
 {
-    protected $casts = [
+    protected \$casts = [
         'id' => 'integer',
         // Completar con los casts necesarios
     ];
 
     public function getId()
     {
-        return $this->attributes['id'];
+        return \$this->attributes['id'] ?? null;
     }
 
-    public function setId(int $id)
+    public function setId(int \$id)
     {
-        $this->attributes['id'] = $id;
+        \$this->attributes['id'] = \$id;
     }
 }"
 
@@ -177,9 +178,18 @@ class ${MODULE_NAME}Model extends Model
     protected \$returnType = $MODULE_NAME::class;
     protected \$allowedFields = []; // Completar con los campos permitidos
 
-    protected \$validationRules = [];
-    protected \$validationMessages = [];
-    protected \$skipValidation = false;
+    protected $validationRules = [
+        'id' => 'required|is_natural_no_zero'
+    ];
+
+    protected $validationMessages = [
+        'id' => [
+            'required' => 'El campo ID es obligatorio.',
+            'is_natural_no_zero' => 'El campo ID debe ser un número natural mayor que cero.'
+        ]
+    ];
+
+    protected $skipValidation = false;
 }"
 
 echo "Módulo $MODULE_NAME creado con éxito."

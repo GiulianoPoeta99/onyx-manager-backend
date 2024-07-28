@@ -14,6 +14,7 @@ class UserModel extends Model
     protected $allowedFields = ['email', 'password', 'first_name', 'last_name'];
 
     protected $validationRules = [
+        'id' => 'required|is_natural_no_zero',
         'email' => 'required|valid_email|is_unique[user.email,id,{id}]',
         'password' => 'required|min_length[8]',
         'first_name' => 'required|alpha_space|min_length[2]',
@@ -21,6 +22,10 @@ class UserModel extends Model
     ];
 
     protected $validationMessages = [
+        'id' => [
+            'required' => 'El campo ID es obligatorio.',
+            'is_natural_no_zero' => 'El campo ID debe ser un número natural mayor que cero.'
+        ],
         'email' => [
             'is_unique' => 'Este email ya está registrado.'
         ]
