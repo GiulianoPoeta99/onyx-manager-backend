@@ -1,39 +1,71 @@
-<?php namespace Modules\User\Controllers;
+<?php
 
-use Core\Controllers\BaseController;
-use Modules\User\Services\UserService;
-use Modules\User\Repositories\UserRepository;
-use Modules\User\Models\User;
+namespace Modules\User\Controllers;
+
+use Libraries\BaseController;
+use Modules\User\Entities\User;
 
 class UserController extends BaseController
 {
-    protected function initService(): void
+    protected $modelName = 'Modules\User\Models\UserModel';
+
+    public function index()
     {
-        $this->service = new UserService(new UserRepository(new User(), \Config\Services::validation()));
+        return $this->respondSuccess($this->model->findAll());
     }
 
-    public function register()
+    public function show($id = null)
     {
-        $data = $this->getRequestInput();
-        $user = $this->service->create($data);
-
-        if ($user === null) {
-            return $this->respondValidationErrors($this->service->getErrors());
+        $model = $this->model->find($id);
+        if ($model === null) {
+            return $this->respondNotFound('Usuario no encontrado');
         }
-
-        return $this->respondCreated($user);
+        return $this->respondSuccess($model);
     }
 
-    public function login()
+    public function create()
     {
         $data = $this->getRequestInput();
-        $user = $this->service->authenticateUser($data['email'] ?? '', $data['password'] ?? '');
 
-        if ($user === null) {
-            return $this->respondUnauthorized('Credenciales inválidas');
+        $entity = new User($data);
+
+        if ($this->model->save($entity)) {
+            return $this->respondCreated($entity, 'Usuario creado exitosamente');
         }
 
-        // Aquí podrías generar un token JWT si estás usando autenticación basada en tokens
-        return $this->respondSuccess(['user' => $user, 'token' => 'JWT_TOKEN_HERE']);
+        return $this->respondValidationErrors($this->model->errors());
+    }
+
+    public function update($id = null)
+    {
+        $data = $this->getRequestInput();
+
+        $existingEntity = $this->model->find($id);
+        if ($existingEntity === null) {
+            return $this->respondNotFound('Usuario no encontrado');
+        }
+
+        $entity = new User($data);
+        $entity->setId($id);
+
+        if ($this->model->save($entity)) {
+            return $this->respondSuccess($entity, 'Usuario actualizado exitosamente');
+        }
+
+        return $this->respondValidationErrors($this->model->errors());
+    }
+
+    public function delete($id = null)
+    {
+        $existingEntity = $this->model->find($id);
+        if ($existingEntity === null) {
+            return $this->respondNotFound('Usuario no encontrado');
+        }
+
+        if ($this->model->delete($id)) {
+            return $this->respondSuccess(null, 'Usuario eliminado exitosamente');
+        }
+
+        return $this->respondServerError('Error al eliminar el usuario');
     }
 }

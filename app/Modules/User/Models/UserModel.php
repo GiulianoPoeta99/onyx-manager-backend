@@ -1,14 +1,16 @@
-<?php namespace Modules\User\Models;
+<?php
 
-use Core\Models\BaseModel;
-use Modules\User\Entities\UserEntity;
+namespace Modules\User\Models;
 
-class User extends BaseModel
+use CodeIgniter\Model;
+use Modules\User\Entities\User;
+
+class UserModel extends Model
 {
     protected $table = 'user';
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType = UserEntity::class;
+    protected $returnType = User::class;
     protected $allowedFields = ['email', 'password', 'first_name', 'last_name'];
 
     protected $validationRules = [

@@ -1,6 +1,6 @@
 <?php
 
-$routes->group('users', ['namespace' => 'Modules\User\Controllers'], function($routes) {
+$routes->group('users', ['namespace' => 'Modules\User\Controllers'], function ($routes) {
     $routes->get('', 'UserController::index');
     $routes->get('(:num)', 'UserController::show/$1');
     $routes->post('', 'UserController::create');

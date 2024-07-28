@@ -1,12 +1,14 @@
-<?php namespace Modules\User\Entities;
+<?php
 
-use Core\Entities\BaseEntity;
-use Core\Attributes\GetSet;
+namespace Modules\Audit\Entities;
 
-class UserEntity extends BaseEntity
+use Libraries\BaseEntity;
+use Helpers\GetSet;
+
+class Audit extends BaseEntity
 {
     protected $dates = ['change_date', 'created_at', 'updated_at', 'deleted_at'];
-    
+
     protected $casts = [
         'id' => 'integer',
         'table_id' => 'integer',
@@ -20,19 +22,19 @@ class UserEntity extends BaseEntity
 
     #[GetSet('set')]
     protected $action;
-    
+
     #[GetSet('set')]
     protected $table;
-    
+
     #[GetSet('set')]
     protected $table_id;
-    
+
     #[GetSet('set')]
     protected $old_content;
-    
+
     #[GetSet('set')]
     protected $new_content;
-    
+
     #[GetSet('set')]
     protected $change_date;
 
@@ -40,7 +42,7 @@ class UserEntity extends BaseEntity
     {
         $old = json_decode($this->old_content, true) ?? [];
         $new = json_decode($this->new_content, true) ?? [];
-        
+
         $diff = [];
         foreach ($new as $key => $value) {
             if (!isset($old[$key]) || $old[$key] !== $value) {
@@ -50,7 +52,7 @@ class UserEntity extends BaseEntity
                 ];
             }
         }
-        
+
         return $diff;
     }
 

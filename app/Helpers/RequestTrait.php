@@ -1,4 +1,6 @@
-<?php namespace Core\Traits;
+<?php
+
+namespace Helpers;
 
 use CodeIgniter\HTTP\ResponseInterface;
 
@@ -30,7 +32,7 @@ trait RequestTrait
         return $this->sendResponse(true, $data, $message, $code);
     }
 
-    protected function respondError(string $message, int $code = 400, $data = null): ResponseInterface
+    protected function respondError($data = null, string $message, int $code = 400,): ResponseInterface
     {
         return $this->sendResponse(false, $data, $message, $code);
     }

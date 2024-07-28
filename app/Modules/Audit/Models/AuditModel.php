@@ -1,14 +1,16 @@
-<?php namespace Modules\Audit\Models;
+<?php
 
-use Core\Models\BaseModel;
-use Modules\Audit\Entities\AuditEntity;
+namespace Modules\Audit\Models;
 
-class Audit extends BaseModel
+use CodeIgniter\Model;
+use Modules\Audit\Entities\Audit;
+
+class AuditModel extends Model
 {
     protected $table = 'audit';
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType = AuditEntity::class;
+    protected $returnType = Audit::class;
     protected $allowedFields = ['action', 'table', 'table_id', 'old_content', 'new_content', 'change_date'];
 
     protected $validationRules = [

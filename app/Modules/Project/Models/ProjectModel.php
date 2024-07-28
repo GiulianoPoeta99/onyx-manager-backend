@@ -1,15 +1,16 @@
-<?php namespace Modules\Project\Models;
+<?php
 
-use Core\Models\BaseModel;
+namespace Modules\Project\Models;
 
-use Modules\Project\Entities\ProjectEntity;
+use CodeIgniter\Model;
+use Modules\Project\Entities\Project;
 
-class Project extends BaseModel
+class ProjectModel extends Model
 {
     protected $table = 'project';
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType = ProjectEntity::class;
+    protected $returnType = Project::class;
     protected $allowedFields = ['name', 'user_id'];
 
     protected $validationRules = [

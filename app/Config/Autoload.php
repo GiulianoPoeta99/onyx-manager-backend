@@ -41,7 +41,8 @@ class Autoload extends AutoloadConfig
      */
     public $psr4 = [
         APP_NAMESPACE => APPPATH,
-        'Core' => APPPATH . 'Core',
+        'Helpers' => APPPATH . 'Helpers',
+        'Libraries' => APPPATH . 'Libraries',
         'Modules' => APPPATH . 'Modules',
     ];
 
