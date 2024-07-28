@@ -13,23 +13,29 @@ create_file() {
     echo "$file_content" > "$file_path"
 }
 
-cd ./app/Modules
+# Directorio base del proyecto
+BASE_DIR="./app/Modules"
+
+# Verificar si el directorio base existe
+if [ ! -d "$BASE_DIR" ]; then
+    echo "Error: El directorio $BASE_DIR no existe."
+    exit 1
+fi
+
+# Cambiar al directorio base
+cd "$BASE_DIR" || exit 1
 
 # Solicitar el nombre del módulo en snake_case
-read -p "Ingrese el nombre del módulo en snake_case (por ejemplo, project_management): " MODULE_NAME_SNAKE
+read -p "Ingrese el nombre del módulo en snake_case (por ejemplo, user): " MODULE_NAME_SNAKE
+
+# Validar la entrada
+if [[ ! $MODULE_NAME_SNAKE =~ ^[a-z_]+$ ]]; then
+    echo "Error: El nombre del módulo debe estar en snake_case (solo letras minúsculas y guiones bajos)."
+    exit 1
+fi
 
 # Convertir a PascalCase
 MODULE_NAME=$(to_pascal_case "$MODULE_NAME_SNAKE")
-
-# Crear la estructura de directorios
-mkdir -p "$MODULE_NAME"
-mkdir -p "$MODULE_NAME/Config"
-mkdir -p "$MODULE_NAME/Controllers"
-mkdir -p "$MODULE_NAME/Database/Migrations"
-mkdir -p "$MODULE_NAME/Entities"
-mkdir -p "$MODULE_NAME/Models"
-mkdir -p "$MODULE_NAME/Repositories"
-mkdir -p "$MODULE_NAME/Services"
 
 # Crear archivos con contenido básico
 create_file "$MODULE_NAME/Config/Routes.php" "<?php
@@ -42,18 +48,75 @@ create_file "$MODULE_NAME/Config/Routes.php" "<?php
     \$routes->delete('(:num)', '${MODULE_NAME}Controller::delete/\$1');
 });"
 
-create_file "$MODULE_NAME/Controllers/${MODULE_NAME}Controller.php" "<?php namespace Modules\\$MODULE_NAME\Controllers;
+create_file "$MODULE_NAME/Controllers/${MODULE_NAME}Controller.php" "<?php
 
-use Core\Controllers\BaseController;
-use Modules\\$MODULE_NAME\Services\\${MODULE_NAME}Service;
-use Modules\\$MODULE_NAME\Repositories\\${MODULE_NAME}Repository;
-use Modules\\$MODULE_NAME\Models\\$MODULE_NAME;
+namespace Modules\\$MODULE_NAME\Controllers;
+
+use Libraries\BaseController;
+use Modules\\$MODULE_NAME\Entities\\$MODULE_NAME;
 
 class ${MODULE_NAME}Controller extends BaseController
 {
-    protected function initService(): void
+    protected \$modelName = 'Modules\\\\$MODULE_NAME\\\\Models\\\\${MODULE_NAME}Model';
+
+    public function index()
     {
-        \$this->service = new ${MODULE_NAME}Service(new ${MODULE_NAME}Repository(new $MODULE_NAME(), \Config\Services::validation()));
+        return \$this->respondSuccess(\$this->model->findAll());
+    }
+
+    public function show(\$id = null)
+    {
+        \$model = \$this->model->find(\$id);
+        if (\$model === null) {
+            return \$this->respondNotFound('$MODULE_NAME no encontrado');
+        }
+        return \$this->respondSuccess(\$model);
+    }
+
+    public function create()
+    {
+        \$data = \$this->getRequestInput();
+
+        \$entity = new $MODULE_NAME(\$data);
+
+        if (\$this->model->save(\$entity)) {
+            return \$this->respondCreated(\$entity, '$MODULE_NAME creado exitosamente');
+        }
+
+        return \$this->respondValidationErrors(\$this->model->errors());
+    }
+
+    public function update(\$id = null)
+    {
+        \$data = \$this->getRequestInput();
+
+        \$existingEntity = \$this->model->find(\$id);
+        if (\$existingEntity === null) {
+            return \$this->respondNotFound('$MODULE_NAME no encontrado');
+        }
+
+        \$entity = new $MODULE_NAME(\$data);
+        \$entity->setId(\$id);
+
+        if (\$this->model->save(\$entity)) {
+            return \$this->respondSuccess(\$entity, '$MODULE_NAME actualizado exitosamente');
+        }
+
+        return \$this->respondValidationErrors(\$this->model->errors());
+    }
+
+    public function delete(\$id = null)
+    {
+        \$existingEntity = \$this->model->find(\$id);
+        if (\$existingEntity === null) {
+            return \$this->respondNotFound('$MODULE_NAME no encontrado');
+        }
+
+        if (\$this->model->delete(\$id)) {
+            return \$this->respondSuccess(null, '$MODULE_NAME eliminado exitosamente');
+        }
+
+        return \$this->respondServerError('Error al eliminar el $MODULE_NAME_SNAKE');
     }
 }"
 
@@ -75,72 +138,48 @@ class Create${MODULE_NAME}Table extends Migration
     }
 }"
 
-create_file "$MODULE_NAME/Entities/${MODULE_NAME}Entity.php" "<?php namespace Modules\\$MODULE_NAME\Entities;
+create_file "$MODULE_NAME/Entities/${MODULE_NAME}.php" "<?php 
 
-use Core\Entities\BaseEntity;
-use Core\Attributes\GetSet;
+namespace Modules\\$MODULE_NAME\Entities;
 
-class ${MODULE_NAME}Entity extends BaseEntity
+use CodeIgniter\Entity\Entity;
+
+class $MODULE_NAME extends Entity
 {
-    protected \$casts = [
+    protected $casts = [
         'id' => 'integer',
+        // Completar con los casts necesarios
     ];
+
+    public function getId()
+    {
+        return $this->attributes['id'];
+    }
+
+    public function setId(int $id)
+    {
+        $this->attributes['id'] = $id;
+    }
 }"
 
-create_file "$MODULE_NAME/Models/${MODULE_NAME}.php" "<?php namespace Modules\\$MODULE_NAME\Models;
+create_file "$MODULE_NAME/Models/${MODULE_NAME}Model.php" "<?php 
 
-use Core\Models\BaseModel;
-use Modules\\$MODULE_NAME\Entities\\${MODULE_NAME}Entity;
+namespace Modules\\$MODULE_NAME\Models;
 
-class $MODULE_NAME extends BaseModel
+use CodeIgniter\Model;
+use Modules\\$MODULE_NAME\Entities\\$MODULE_NAME;
+
+class ${MODULE_NAME}Model extends Model
 {
     protected \$table = '$MODULE_NAME_SNAKE';
     protected \$primaryKey = 'id';
     protected \$useAutoIncrement = true;
-    protected \$returnType = ${MODULE_NAME}Entity::class;
-    protected \$allowedFields = ['name']; // Ajusta según tus necesidades
+    protected \$returnType = $MODULE_NAME::class;
+    protected \$allowedFields = []; // Completar con los campos permitidos
 
-    protected \$validationRules = [
-        'name' => 'required|min_length[3]|max_length[255]',
-    ];
-
-    protected \$validationMessages = [
-        'name' => [
-            'required' => 'El nombre es obligatorio.',
-            'min_length' => 'El nombre debe tener al menos 3 caracteres.',
-            'max_length' => 'El nombre no puede exceder los 255 caracteres.'
-        ],
-    ];
-
+    protected \$validationRules = [];
+    protected \$validationMessages = [];
     protected \$skipValidation = false;
-}"
-
-create_file "$MODULE_NAME/Repositories/${MODULE_NAME}Repository.php" "<?php namespace Modules\\$MODULE_NAME\Repositories;
-
-use CodeIgniter\Validation\Validation;
-use Core\Repositories\BaseRepository;
-use Modules\\$MODULE_NAME\Models\\$MODULE_NAME;
-
-class ${MODULE_NAME}Repository extends BaseRepository
-{
-    public function __construct($MODULE_NAME \$model, Validation \$validator)
-    {
-        parent::__construct(\$model, \$validator);
-    }
-}"
-
-create_file "$MODULE_NAME/Services/${MODULE_NAME}Service.php" "<?php namespace Modules\\$MODULE_NAME\Services;
-
-use Core\Services\BaseService;
-use Modules\\$MODULE_NAME\Repositories\\${MODULE_NAME}Repository;
-use Modules\\$MODULE_NAME\Entities\\${MODULE_NAME}Entity;
-
-class ${MODULE_NAME}Service extends BaseService
-{
-    public function __construct(${MODULE_NAME}Repository \$repository)
-    {
-        parent::__construct(\$repository);
-    }
 }"
 
 echo "Módulo $MODULE_NAME creado con éxito."
