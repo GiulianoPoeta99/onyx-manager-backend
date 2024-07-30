@@ -1,0 +1,29 @@
+name: ${CONTAINER_NAME:?container name is not defined...}-codeigniter
+services: 
+  x-base: &x-base
+    container_name: ${CONTAINER_NAME:?container name is not defined...}-backend
+    build: 
+      context: . 
+      target: final
+      dockerfile: ./docker/dev.Dockerfile
+    restart: ${RESTART:-no}
+    ports:
+      - ${BACKEND_PORT:-8080}:8080
+    volumes:
+      - ./app:/var/www/html/app:rw
+      - ./public:/var/www/html/public:rw
+      - ./writable:/var/www/html/writable:rw
+      - ./composer.json:/var/www/html/composer.json:rw
+      - ./composer.lock:/var/www/html/composer.lock:rw
+      - ./spark:/var/www/html/spark:rw
+      - ./preload.php:/var/www/html/preload.php:rw
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+  backend:
+    <<: *x-base
+
+  dev:
+    <<: *x-base
+    env_file:
+      - ./.env
