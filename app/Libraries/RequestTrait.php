@@ -1,6 +1,6 @@
 <?php
 
-namespace Helpers;
+namespace Libraries;
 
 use CodeIgniter\HTTP\ResponseInterface;
 

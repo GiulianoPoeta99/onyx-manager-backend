@@ -4,7 +4,7 @@ namespace Libraries;
 
 use CodeIgniter\RESTful\ResourceController;
 
-use Helpers\RequestTrait;
+use Libraries\RequestTrait;
 
 class BaseController extends ResourceController
 {
