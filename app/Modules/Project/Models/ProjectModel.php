@@ -14,16 +14,11 @@ class ProjectModel extends Model
     protected $allowedFields = ['name', 'user_id'];
 
     protected $validationRules = [
-        'id' => 'required|is_natural_no_zero',
         'name' => 'required|min_length[3]|max_length[255]',
         'user_id' => 'required|integer|is_not_unique[user.id]'
     ];
 
     protected $validationMessages = [
-        'id' => [
-            'required' => 'El campo ID es obligatorio.',
-            'is_natural_no_zero' => 'El campo ID debe ser un número natural mayor que cero.'
-        ],
         'name' => [
             'required' => 'El nombre del proyecto es obligatorio.',
             'min_length' => 'El nombre del proyecto debe tener al menos 3 caracteres.',

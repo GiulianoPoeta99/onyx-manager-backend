@@ -14,15 +14,10 @@ class UserProjectModel extends Model
     protected $allowedFields = ['user_id', 'project_id']; // Campos permitidos
 
     protected $validationRules = [
-        'id' => 'required|is_natural_no_zero',
         'user_id' => 'required|integer|is_not_unique[user.id]',
         'project_id' => 'required|integer|is_not_unique[project.id]'
     ];
     protected $validationMessages = [
-        'id' => [
-            'required' => 'El campo ID es obligatorio.',
-            'is_natural_no_zero' => 'El campo ID debe ser un número natural mayor que cero.'
-        ],
         'user_id' => [
             'required' => 'El ID de usuario es requerido.',
             'integer' => 'El ID de usuario debe ser un número entero.',
