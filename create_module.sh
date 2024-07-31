@@ -178,18 +178,11 @@ class ${MODULE_NAME}Model extends Model
     protected \$returnType = $MODULE_NAME::class;
     protected \$allowedFields = []; // Completar con los campos permitidos
 
-    protected $validationRules = [
-        'id' => 'required|is_natural_no_zero'
-    ];
+    protected \$validationRules = [];
 
-    protected $validationMessages = [
-        'id' => [
-            'required' => 'El campo ID es obligatorio.',
-            'is_natural_no_zero' => 'El campo ID debe ser un número natural mayor que cero.'
-        ]
-    ];
+    protected \$validationMessages = [];
 
-    protected $skipValidation = false;
+    protected \$skipValidation = false;
 }"
 
 echo "Módulo $MODULE_NAME creado con éxito."
