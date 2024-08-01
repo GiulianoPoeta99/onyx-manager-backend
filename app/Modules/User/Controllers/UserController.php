@@ -96,8 +96,8 @@ class UserController extends BaseController
 
         $key = getenv('JWT_SECRET');
         $payload = [
-            'iss' => 'tu_emisor',
-            'aud' => 'tu_audiencia',
+            'iss' => 'onyx',
+            'aud' => 'backend',
             'iat' => time(),
             'exp' => time() + 3600,
             'uid' => $user->getId(),
