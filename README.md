@@ -87,6 +87,14 @@
     php spark key:generate 
     ```
 
+## Modulos
+
+Hay un comando personalizado c=que creara un odulo completo de codeigiter 4 siguiendo el hmvc planteado. Para usarlo es asi>
+
+```bash
+php spark make:module
+```
+
 ## Encender para dev con docker
 
 ```bash
