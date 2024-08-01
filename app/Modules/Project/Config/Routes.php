@@ -1,6 +1,6 @@
 <?php
 
-$routes->group('projects', ['namespace' => 'Modules\Project\Controllers'], function ($routes) {
+$routes->group('projects', ['namespace' => 'Modules\Project\Controllers', 'filter' => 'jwt'], function ($routes) {
     $routes->get('', 'ProjectController::index');
     $routes->get('(:num)', 'ProjectController::show/$1');
     $routes->post('', 'ProjectController::create');

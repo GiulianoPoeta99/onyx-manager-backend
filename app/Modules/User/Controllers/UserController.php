@@ -4,6 +4,7 @@ namespace Modules\User\Controllers;
 
 use Libraries\BaseController;
 use Modules\User\Entities\User;
+use Firebase\JWT\JWT;
 
 class UserController extends BaseController
 {
@@ -67,5 +68,43 @@ class UserController extends BaseController
         }
 
         return $this->respondServerError('Error al eliminar el usuario');
+    }
+
+    public function register()
+    {
+        $data = $this->getRequestInput();
+
+        $entity = new User($data);
+        $entity->setPassword($data['password']);
+
+        if ($this->model->save($entity)) {
+            return $this->respondCreated($entity, 'Usuario registrado exitosamente');
+        }
+
+        return $this->respondValidationErrors($this->model->errors());
+    }
+
+    public function login()
+    {
+        $data = $this->getRequestInput();
+
+        $user = $this->model->where('email', $data['email'])->first();
+
+        if (!$user || !password_verify($data['password'], $user->getPassword())) {
+            return $this->respondUnauthorized('Credenciales inválidas');
+        }
+
+        $key = getenv('JWT_SECRET');
+        $payload = [
+            'iss' => 'tu_emisor',
+            'aud' => 'tu_audiencia',
+            'iat' => time(),
+            'exp' => time() + 3600,
+            'uid' => $user->getId(),
+        ];
+
+        $token = JWT::encode($payload, $key, 'HS256');
+
+        return $this->respondSuccess(['token' => $token], 'Login exitoso');
     }
 }

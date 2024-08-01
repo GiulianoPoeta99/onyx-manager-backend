@@ -1,6 +1,6 @@
 <?php
 
-$routes->group('roles', ['namespace' => 'Modules\Role\Controllers'], function ($routes) {
+$routes->group('roles', ['namespace' => 'Modules\Role\Controllers', 'filter' => 'jwt'], function ($routes) {
     $routes->get('', 'RoleController::index');
     $routes->get('(:num)', 'RoleController::show/$1');
     $routes->post('', 'RoleController::create');

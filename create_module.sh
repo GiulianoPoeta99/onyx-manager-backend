@@ -40,7 +40,7 @@ MODULE_NAME=$(to_pascal_case "$MODULE_NAME_SNAKE")
 # Crear archivos con contenido básico
 create_file "$MODULE_NAME/Config/Routes.php" "<?php
 
-\$routes->group('$MODULE_NAME_SNAKE', ['namespace' => 'Modules\\\\$MODULE_NAME\\\\Controllers'], function(\$routes) {
+\$routes->group('$MODULE_NAME_SNAKE', ['namespace' => 'Modules\\\\$MODULE_NAME\\\\Controllers', 'filter' => 'jwt'], function(\$routes) {
     \$routes->get('', '${MODULE_NAME}Controller::index');
     \$routes->get('(:num)', '${MODULE_NAME}Controller::show/\$1');
     \$routes->post('', '${MODULE_NAME}Controller::create');

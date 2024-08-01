@@ -1,6 +1,6 @@
 <?php
 
-$routes->group('users_roles', ['namespace' => 'Modules\UserRole\Controllers'], function ($routes) {
+$routes->group('users_roles', ['namespace' => 'Modules\UserRole\Controllers', 'filter' => 'jwt'], function ($routes) {
     $routes->get('', 'UserRoleController::index');
     $routes->get('(:num)', 'UserRoleController::show/$1');
     $routes->post('', 'UserRoleController::create');
