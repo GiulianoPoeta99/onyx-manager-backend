@@ -28,8 +28,8 @@ class CreateUserProjectTable extends Migration
             ],
         ]);
         $this->forge->addKey('id', true);
-        $this->forge->addForeignKey('user_id', 'user', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('project_id', 'project', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('user_id', 'user', 'id', 'RESTRICT', 'RESTRICT');
+        $this->forge->addForeignKey('project_id', 'project', 'id', 'RESTRICT', 'RESTRICT');
         $this->forge->createTable('user_project');
 
         // Crear función para el trigger

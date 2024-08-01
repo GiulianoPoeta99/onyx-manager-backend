@@ -27,8 +27,8 @@ class CreateUserRoleTable extends Migration
             ],
         ]);
         $this->forge->addKey('id', true);
-        $this->forge->addForeignKey('user_id', 'user', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('role_id', 'role', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('user_id', 'user', 'id', 'RESTRICT', 'RESTRICT');
+        $this->forge->addForeignKey('role_id', 'role', 'id', 'RESTRICT', 'RESTRICT');
         $this->forge->createTable('user_role');
 
         $this->db->query("

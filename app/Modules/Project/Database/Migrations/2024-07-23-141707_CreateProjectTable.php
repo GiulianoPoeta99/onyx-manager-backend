@@ -27,7 +27,7 @@ class CreateProjectTable extends Migration
             ],
         ]);
         $this->forge->addKey('id', true);
-        $this->forge->addForeignKey('user_id', 'user', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('user_id', 'user', 'id', 'RESTRICT', 'RESTRICT');
         $this->forge->createTable('project');
 
         // Crear función para el trigger
@@ -87,7 +87,7 @@ class CreateProjectTable extends Migration
     {
         // Eliminar el trigger
         $this->db->query('DROP TRIGGER IF EXISTS tr_projects_audit ON "project";');
-        
+
         // Eliminar la función
         $this->db->query("DROP FUNCTION IF EXISTS process_project_audit();");
 
