@@ -1,16 +1,17 @@
 <?php
 
-namespace Modules\TypeState\Entities;
+namespace Modules\Activity\Entities;
 
 use CodeIgniter\Entity\Entity;
 
-class TypeState extends Entity
+class Activity extends Entity
 {
     protected $casts = [
         'id' => 'integer',
         'name' => 'string',
         'project_id' => 'integer',
         'type_activity_id' => 'integer',
+        'user_id' => 'integer',
     ];
 
     public function getId()
@@ -51,5 +52,15 @@ class TypeState extends Entity
     public function setTypeActivityId(int $typeActivityId)
     {
         $this->attributes['type_activity_id'] = $typeActivityId;
+    }
+
+    public function getUserId()
+    {
+        return $this->attributes['user_id'];
+    }
+
+    public function setUserId(int $userId)
+    {
+        $this->attributes['user_id'] = $userId;
     }
 }

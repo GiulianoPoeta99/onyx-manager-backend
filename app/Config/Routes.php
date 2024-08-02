@@ -13,4 +13,5 @@ $routes->group('api', function (RouteCollection $routes) {
     require ROOTPATH . 'app/Modules/UserRole/Config/Routes.php';
     require ROOTPATH . 'app/Modules/TypeActivity/Config/Routes.php';
     require ROOTPATH . 'app/Modules/TypeState/Config/Routes.php';
+    require ROOTPATH . 'app/Modules/Activity/Config/Routes.php';
 });
